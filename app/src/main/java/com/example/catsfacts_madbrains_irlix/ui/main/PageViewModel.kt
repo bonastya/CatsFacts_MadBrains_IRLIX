@@ -13,7 +13,12 @@ class PageViewModel : ViewModel() {
         "Hello world from section: $it"
     }
 
+
     fun setIndex(index: Int) {
         _index.value = index
+    }
+
+    fun getIndex(): Int? {
+        return _index.value
     }
 }

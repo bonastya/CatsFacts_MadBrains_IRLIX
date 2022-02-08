@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CatsFacts_MadBrains_IRLIX</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="app_name">CatsFacts (MadBrains &amp; IRLIX)</string>
+    <string name="tab_text_1">Факты из интернета</string>
+    <string name="tab_text_2">Избранное</string>
 </resources>
