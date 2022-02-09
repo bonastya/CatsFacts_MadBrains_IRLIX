@@ -1,21 +1,14 @@
 package com.example.catsfacts_madbrains_irlix
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import com.squareup.picasso.Picasso
-import java.lang.reflect.Array.get
-import android.graphics.BitmapFactory
 
-import android.graphics.Bitmap
-import android.icu.number.NumberFormatter.with
-import android.icu.number.NumberRangeFormatter.with
-
-import java.io.IOException
-import java.io.InputStream
-import java.net.MalformedURLException
+import kotlinx.coroutines.*
+import org.json.JSONObject
 import java.net.URL
 
 
@@ -25,36 +18,52 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         with(itemView) {
             val catFactTextView: TextView = findViewById<TextView>(R.id.catFactTextView)
             val catFactImg: ImageView = findViewById<ImageView>(R.id.cat_fact_image)
+            val catProgressBar: ProgressBar = findViewById<ProgressBar>(R.id.catProgressBar)
 
             //заполнение данными
             catFactTextView.text = cat.factText
+            getImg(catFactImg, catProgressBar)
+
+        }
+    }
 
 
-/*
+    private val imgUrl = "https://aws.random.cat/meow"
 
-            try {
-                val i: ImageView = findViewById<ImageView>(R.id.cat_fact_image)
-                val bitmap = BitmapFactory.decodeStream(URL("https://i.imgur.com/DvpvklR.png").getContent() as InputStream)
-                i.setImageBitmap(bitmap)
-            } catch (e: MalformedURLException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-*/
+    fun getImg(catFactImg: ImageView, catProgressBar: ProgressBar) {
 
+        catProgressBar.visibility = View.VISIBLE
+        val result: Deferred<String> = GlobalScope.async {
+            getCatsImgFromServer()
+        }
 
+        GlobalScope.launch(Dispatchers.Main) {
+            // get the downloaded bitmap
+            val imgUrl : String = result.await()
 
-            if (cat.iconUrl != "") {
+            imgUrl?.apply {
+
                 Picasso.get()
-                    .load(cat.iconUrl)
+                    .load(imgUrl)
                     .fit().centerCrop()
                     .into(catFactImg)
             }
 
-
-
-
+            catProgressBar.visibility = View.INVISIBLE
         }
     }
+
+
+    private fun getCatsImgFromServer():String{
+        var img = URL(imgUrl).readText()
+        return parceImgResponce(img)
+    }
+
+    private fun parceImgResponce(responceText: String):String{
+        val jsonObject = JSONObject(responceText)
+        val catImg = jsonObject.getString("file").replace("\\", "")
+        return catImg
+    }
+
+
 }

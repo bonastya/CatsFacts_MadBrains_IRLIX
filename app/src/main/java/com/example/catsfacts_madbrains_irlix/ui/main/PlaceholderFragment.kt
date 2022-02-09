@@ -23,9 +23,8 @@ import com.example.catsfacts_madbrains_irlix.databinding.FragmentMainBinding
 import kotlinx.coroutines.Deferred
 import org.json.JSONArray
 import org.json.JSONObject
-import kotlinx.coroutines.*
 
-//import com.example.catsfacts_madbrains_irlix.databinding.FragmentMainBinding
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -60,14 +59,6 @@ class PlaceholderFragment : Fragment() {
         val root = binding.root
 
 
-
-       /* val queueImg = Volley.newRequestQueue(context)
-
-
-        for(i in 0..10){
-            getCatsImgFromServer(queueImg)
-        }*/
-
         val queue = Volley.newRequestQueue(context)
         getCatsFromServer(queue)
 
@@ -82,14 +73,6 @@ class PlaceholderFragment : Fragment() {
             this.adapter = catFactsAdapter
             this.setHasFixedSize(true)
         }
-
-        /*val textView: TextView = binding.sectionLabel
-        pageViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })*/
-
-
-
 
         return root
     }
@@ -110,21 +93,13 @@ class PlaceholderFragment : Fragment() {
     }
 
     //получить список объектов из json
+    private fun parceResponce(responceText: String){
 
-    private fun parceResponce(responceText: String)/*: ArrayList<CatFact>*/{
-
-        val catFactsList:ArrayList<CatFact> = ArrayList()
         val jsonArray = JSONArray("[{"+responceText)
         for(i in 0 until jsonArray.length()){
             val jsonObject = jsonArray.getJSONObject(i)
             val catText = jsonObject.getString("text")
-
-
-
-            //val icUrl = "https:\\/\\/purr.objects-us-east-1.dream.io\\/i\\/img_20180120_204504.jpg".replace("\\", "")
-
             val cat = CatFact(catText, "", false)
-
 
             catFacts.add(cat)
         }
@@ -132,42 +107,8 @@ class PlaceholderFragment : Fragment() {
 
     }
 
-    suspend fun getImg(number: Int) = coroutineScope{
-        val queueImg = Volley.newRequestQueue(context)
-        val message: Deferred<String> = async{ getCatsImgFromServer(queueImg)}
-        catFacts[number].iconUrl=message.await()
-        println("message: ${message.await()}")
-        println("Program has finished")
-    }
 
 
-
-
-    private fun getCatsImgFromServer(queue: RequestQueue):String{
-        var img = ""
-        val stringRequest = StringRequest(
-            Request.Method.GET,
-            imgUrl,
-            { response ->
-                catImages.add(parceImgResponce(response))
-                img=parceImgResponce(response)
-            },
-            {
-                Toast.makeText(context, "Ошибка запроса", Toast.LENGTH_SHORT).show()
-            }
-        )
-        queue.add(stringRequest)
-
-        return img
-    }
-
-    private fun parceImgResponce(responceText: String):String{
-        val jsonObject = JSONObject(responceText)
-        val catImg = jsonObject.getString("file").replace("\\", "")
-        println("aaa"+catImg)
-        //val catImg = "https:\\/\\/purr.objects-us-east-1.dream.io\\/i\\/img_20180120_204504.jpg"//.replace("\\", "")
-        return catImg
-    }
 
     companion object {
         /**
@@ -203,13 +144,9 @@ class PlaceholderFragment : Fragment() {
 
 
         if(arguments?.getInt(ARG_SECTION_NUMBER)==1){
-            /*catFacts.add(CatFact("121121gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/034_-_axGmO0U.gif", true))
-            catFacts.add(CatFact("6565656gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/r9c1kru.jpg", true))
-            catFacts.add(CatFact("121121gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/034_-_axGmO0U.gif", true))
-            catFacts.add(CatFact("6565656gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/r9c1kru.jpg", true))*/
 
         }
         catFacts.add(CatFact("121121gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/034_-_axGmO0U.gif", true))
-        catFacts.add(CatFact("6565656gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/r9c1kru.jpg", true))
+        //catFacts.add(CatFact("6565656gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/r9c1kru.jpg", true))
     }
 }
