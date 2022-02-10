@@ -57,8 +57,15 @@ class PlaceholderFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val root = binding.root
 
-        val queue = Volley.newRequestQueue(context)
-        getCatsFromServer(queue)
+        if(arguments?.getInt(ARG_SECTION_NUMBER)==1){
+            //факты из интернета(загрузить с сервера)
+            val queue = Volley.newRequestQueue(context)
+            getCatsFromServer(queue)
+        }
+        else{
+            //избранное(загрузить из бд)
+
+        }
 
 
         listenForCats()

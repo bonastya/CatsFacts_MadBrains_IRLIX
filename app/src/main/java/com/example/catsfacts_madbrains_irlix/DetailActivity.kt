@@ -1,38 +1,56 @@
 package com.example.catsfacts_madbrains_irlix
-import android.content.Context
-import android.content.Intent
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.example.catsfacts_madbrains_irlix.DetailActivity.Companion.CAT_FACT_TAG
-
 import com.squareup.picasso.Picasso
-
+import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.URL
 
+class DetailActivity : AppCompatActivity() {
 
-class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    companion object {
+        const val CAT_FACT_TAG = "cat_fact_tag"
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_detail)
 
-    fun bind(cat: CatFact) {
-        with(itemView) {
-            val catFactTextView: TextView = findViewById<TextView>(R.id.catFactTextView)
-            val catFactImg: ImageView = findViewById<ImageView>(R.id.cat_fact_image)
-            val catProgressBar: ProgressBar = findViewById<ProgressBar>(R.id.catProgressBar)
+        setupActionBar()
+        setText()
+        getImg(catImg, progressBarImg)
 
-            //заполнение данными
-            catFactTextView.text = cat.factText
-            getImg(catFactImg, catProgressBar)
+    }
 
-            this.setOnClickListener{
-                openDetailActivity(this.context, cat)
-            }
+    private fun setupActionBar(){
+        supportActionBar?.apply {
+            setDisplayShowHomeEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
 
+            title = "Подробности"
         }
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
+    }
+    private  fun setText(){
+        val text = intent?.extras?.getString(CAT_FACT_TAG)
+        textView2.text = text
+    }
+
+    private  fun setImg(){
+        val text = intent?.extras?.getString(CAT_FACT_TAG)
+        textView2.text = text
+    }
+
+
+
 
 
     private val imgUrl = "https://aws.random.cat/meow"
@@ -60,7 +78,6 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-
     private fun getCatsImgFromServer():String{
         var img = URL(imgUrl).readText()
         return parceImgResponce(img)
@@ -71,12 +88,5 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val catImg = jsonObject.getString("file").replace("\\", "")
         return catImg
     }
-
-    private fun openDetailActivity(context: Context, cat: CatFact){
-        val intent = Intent(context, DetailActivity::class.java)
-        intent.putExtra(CAT_FACT_TAG, cat.factText)
-        context.startActivity(intent)
-    }
-
 
 }
