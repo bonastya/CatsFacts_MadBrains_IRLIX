@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.catsfacts_madbrains_irlix.R
 import com.example.catsfacts_madbrains_irlix.CatFact
 
-class CatsAdapter( var catsList: MutableList<CatFact>) :
+class CatsAdapter( var catsList: List<CatFact>) :
     RecyclerView.Adapter<CatsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatsViewHolder {
@@ -22,10 +22,10 @@ class CatsAdapter( var catsList: MutableList<CatFact>) :
 
     override fun getItemCount() = catsList.size
 
-    fun add(cat: CatFact){
+   /* fun add(cat: CatFact){
         catsList.add(cat)
         notifyDataSetChanged()
-    }
+    }*/
 
 
 

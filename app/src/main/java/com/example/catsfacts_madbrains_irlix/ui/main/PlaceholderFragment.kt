@@ -20,11 +20,10 @@ import com.example.catsfacts_madbrains_irlix.CatFact
 import com.example.catsfacts_madbrains_irlix.CatsAdapter
 import com.example.catsfacts_madbrains_irlix.R
 import com.example.catsfacts_madbrains_irlix.databinding.FragmentMainBinding
-import kotlinx.coroutines.Deferred
 import org.json.JSONArray
 import org.json.JSONObject
 
-
+//import com.example.catsfacts_madbrains_irlix.databinding.FragmentMainBinding
 
 /**
  * A placeholder fragment containing a simple view.
@@ -36,7 +35,7 @@ class PlaceholderFragment : Fragment() {
     private val binding get() = _binding!!
 
 
-    private val catFacts: ArrayList<CatFact> = ArrayList()
+    private val catFacts: MutableList<CatFact> = mutableListOf()
     private val catImages: ArrayList<String> = ArrayList()
     val catFactsAdapter = CatsAdapter(catFacts)
 
@@ -58,21 +57,23 @@ class PlaceholderFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val root = binding.root
 
-
         val queue = Volley.newRequestQueue(context)
         getCatsFromServer(queue)
 
+
         listenForCats()
 
-
+        println("eee23"+catFacts.size)
         //добавление адаптера к RecyclerView
-        val catsRecyclerView: RecyclerView = binding.catsRecyclerView
 
-        with(catsRecyclerView) {
-            this.layoutManager = LinearLayoutManager(context)
-            this.adapter = catFactsAdapter
-            this.setHasFixedSize(true)
-        }
+
+        /*val textView: TextView = binding.sectionLabel
+        pageViewModel.text.observe(viewLifecycleOwner, Observer {
+            textView.text = it
+        })*/
+
+
+
 
         return root
     }
@@ -94,20 +95,28 @@ class PlaceholderFragment : Fragment() {
 
     //получить список объектов из json
     private fun parceResponce(responceText: String){
-
-        val jsonArray = JSONArray("[{"+responceText)
+        //val cats: MutableList<CatFact> = mutableListOf()
+        //catFacts.clear()
+        val jsonArray = JSONArray(responceText)
         for(i in 0 until jsonArray.length()){
             val jsonObject = jsonArray.getJSONObject(i)
             val catText = jsonObject.getString("text")
             val cat = CatFact(catText, "", false)
 
             catFacts.add(cat)
+            println("eee "+ catText)
+        }
+        println("eee23"+catFacts.size)
+        val catsRecyclerView: RecyclerView = binding.catsRecyclerView
+
+        with(catsRecyclerView) {
+            this.layoutManager = LinearLayoutManager(context)
+            this.adapter = catFactsAdapter
+            this.setHasFixedSize(true)
         }
 
 
     }
-
-
 
 
     companion object {
@@ -144,9 +153,11 @@ class PlaceholderFragment : Fragment() {
 
 
         if(arguments?.getInt(ARG_SECTION_NUMBER)==1){
+            /*catFacts.add(CatFact("121121gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/034_-_axGmO0U.gif", true))
+            catFacts.add(CatFact("6565656gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/r9c1kru.jpg", true))
+            catFacts.add(CatFact("121121gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/034_-_axGmO0U.gif", true))
+            catFacts.add(CatFact("6565656gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/r9c1kru.jpg", true))*/
 
         }
-        catFacts.add(CatFact("121121gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/034_-_axGmO0U.gif", true))
-        //catFacts.add(CatFact("6565656gg fg fg h f h fh f  g g jyg j ","https://purr.objects-us-east-1.dream.io/i/r9c1kru.jpg", true))
     }
 }
