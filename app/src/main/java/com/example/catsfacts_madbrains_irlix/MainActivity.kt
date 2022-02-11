@@ -1,5 +1,8 @@
 package com.example.catsfacts_madbrains_irlix
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -8,6 +11,8 @@ import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.example.catsfacts_madbrains_irlix.ui.main.SectionsPagerAdapter
 import com.example.catsfacts_madbrains_irlix.databinding.ActivityMainBinding
 import io.realm.Realm
@@ -36,8 +41,15 @@ class MainActivity : AppCompatActivity() {
 
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            try {
+                val browserIntent =
+                    Intent(Intent.ACTION_VIEW, Uri.parse("mailto:bonastya@gmail.com?subject=Тестовое задание по курсу Аndroid"))
+                ContextCompat.startActivity(this, browserIntent, null)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(this, "Проверьте интернет соединение", Toast.LENGTH_LONG)
+                    .show()
+                e.printStackTrace()
+            }
         }
     }
 
