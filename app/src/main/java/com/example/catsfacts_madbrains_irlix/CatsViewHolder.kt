@@ -3,30 +3,25 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.catsfacts_madbrains_irlix.DetailActivity.Companion.CAT_FACT_TAG
-
 import com.squareup.picasso.Picasso
-
-import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.URL
 
 
 class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+
     fun bind(cat: CatFact) {
         with(itemView) {
             val catFactTextView: TextView = findViewById<TextView>(R.id.catFactTextView)
             val catFactImg: ImageView = findViewById<ImageView>(R.id.cat_fact_image)
-            val catProgressBar: ProgressBar = findViewById<ProgressBar>(R.id.catProgressBar)
 
             //заполнение данными
             catFactTextView.text = cat.factText
@@ -44,28 +39,6 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val imgUrl = "https://aws.random.cat/meow"
 
-    fun getImg(catFactImg: ImageView, catProgressBar: ProgressBar) {
-
-        catProgressBar.visibility = View.VISIBLE
-        val result: Deferred<String> = GlobalScope.async {
-            getCatsImgFromServer()
-        }
-
-        GlobalScope.launch(Dispatchers.Main) {
-            // get the downloaded bitmap
-            val imgUrl : String = result.await()
-
-            imgUrl?.apply {
-
-                Picasso.get()
-                    .load(imgUrl)
-                    .fit().centerCrop()
-                    .into(catFactImg)
-            }
-
-            catProgressBar.visibility = View.INVISIBLE
-        }
-    }
 
     private fun getImgFromServer(catFactImg: ImageView, queue: RequestQueue) {
         val stringRequest = StringRequest(

@@ -1,10 +1,11 @@
 package com.example.catsfacts_madbrains_irlix
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.widget.Button
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -12,11 +13,10 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.squareup.picasso.Picasso
 import io.realm.Realm
-import io.realm.RealmConfiguration
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import java.net.URL
 
 class DetailActivity : AppCompatActivity() {
 
@@ -33,7 +33,14 @@ class DetailActivity : AppCompatActivity() {
         val queue = Volley.newRequestQueue(this)
         getImgFromServer(catImg,queue)
 
-        //getImg(catImg, progressBarImg)
+        val addButton: Button = findViewById(R.id.addButton)
+
+        if (getFactFromDB().isEmpty()) {
+            addButton.text = "Добавить в избранное"
+        } else {
+            addButton.text = "Удалить из избранного"
+        }
+
 
     }
 
@@ -47,6 +54,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        startMainActivity(this)
         finish()
         return true
     }
@@ -54,12 +62,6 @@ class DetailActivity : AppCompatActivity() {
         val text = intent?.extras?.getString(CAT_FACT_TAG)
         textView2.text = text
     }
-
-    private  fun setImg(){
-        val text = intent?.extras?.getString(CAT_FACT_TAG)
-        textView2.text = text
-    }
-
 
     private val imgUrl = "https://aws.random.cat/meow"
 
@@ -92,18 +94,40 @@ class DetailActivity : AppCompatActivity() {
 
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
-        val cat: CatFact =realm.createObject(CatFact::class.java)
-        cat.factText=text!!
-        cat.isFavorit=true
+
+        if (getFactFromDB().isEmpty()) {
+            val cat: CatFact =realm.createObject(CatFact::class.java)
+            cat.factText=text!!
+            cat.isFavorit=true
+        }else{
+            val catFacts: RealmResults<CatFact> = getFactFromDB()
+            if (!catFacts.isEmpty()) {
+                for (i in catFacts.size - 1 downTo 0) {
+                    catFacts[i]?.deleteFromRealm()
+                }
+            }
+
+        }
+
         realm.commitTransaction()
+        startMainActivity(this)
+
     }
 
-    private fun initRealm(){
-        Realm.init(this)
-        val config = RealmConfiguration.Builder()
-            .deleteRealmIfMigrationNeeded()
-            .build()
-        Realm.setDefaultConfiguration(config)
+    private fun getFactFromDB(): RealmResults<CatFact> {
+        val realm = Realm.getDefaultInstance()
+
+        return realm.where(CatFact::class.java)
+            .equalTo("factText", intent?.extras?.getString(CAT_FACT_TAG))
+            .findAll()
     }
+
+    private fun startMainActivity(context: Context) {
+        val intent = Intent(context, MainActivity::class.java)
+        context.startActivity(intent)
+        overridePendingTransition(R.anim.slide_left, R.anim.slide_right)
+    }
+
+
 
 }

@@ -13,9 +13,11 @@
         android:theme="@style/Theme.CatsFacts_MadBrains_IRLIX" >
         <activity
             android:name=".DetailActivity"
+            android:noHistory="true"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
+            android:noHistory="true"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.CatsFacts_MadBrains_IRLIX.NoActionBar" >
