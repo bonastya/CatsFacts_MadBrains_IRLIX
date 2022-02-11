@@ -17,7 +17,6 @@ import java.net.URL
 
 class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-
     fun bind(cat: CatFact) {
         with(itemView) {
             val catFactTextView: TextView = findViewById<TextView>(R.id.catFactTextView)
@@ -25,7 +24,6 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             //заполнение данными
             catFactTextView.text = cat.factText
-            //getImg(catFactImg, catProgressBar)
             val queue = Volley.newRequestQueue(context)
             getImgFromServer(catFactImg, queue)
 
@@ -35,7 +33,6 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         }
     }
-
 
     private val imgUrl = "https://aws.random.cat/meow"
 
@@ -58,22 +55,7 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 //Toast.makeText(this, "Ошибка запроса", Toast.LENGTH_SHORT).show()
             }
         )
-
         queue.add(stringRequest)
-    }
-
-
-    private fun getCatsImgFromServer():String{
-        println("ooo функция getCatsImgFromServer")
-        var img = URL(imgUrl).readText()
-        println("ooo функция getCatsImgFromServer рез "+img)
-        return parceImgResponce(img)
-    }
-
-    private fun parceImgResponce(responceText: String):String{
-        val jsonObject = JSONObject(responceText)
-        val catImg = jsonObject.getString("file").replace("\\", "")
-        return catImg
     }
 
     private fun openDetailActivity(context: Context, cat: CatFact){

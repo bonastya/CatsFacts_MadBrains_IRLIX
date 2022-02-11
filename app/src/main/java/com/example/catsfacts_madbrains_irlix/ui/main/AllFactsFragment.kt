@@ -18,21 +18,10 @@ import com.example.catsfacts_madbrains_irlix.CatsAdapter
 import com.example.catsfacts_madbrains_irlix.R
 import org.json.JSONArray
 
-//import com.example.catsfacts_madbrains_irlix.databinding.FragmentMainBinding
 
-/**
- * A placeholder fragment containing a simple view.
- */
 class AllFactsFragment : Fragment() {
 
     private lateinit var pageViewModel: PageViewModel
-
-    private val catFacts: MutableList<CatFact> = mutableListOf()
-    private val cattest: MutableList<CatFact> = mutableListOf()
-    private val catImages: ArrayList<String> = ArrayList()
-    val catFactsAdapter = CatsAdapter(catFacts)
-    val catTestAdapter = CatsAdapter(cattest)
-
     private val url = "https://cat-fact.herokuapp.com/facts"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +66,6 @@ class AllFactsFragment : Fragment() {
     //получить список объектов из json
     private fun parceResponce(responceText: String):List<CatFact>{
         val cats: MutableList<CatFact> = mutableListOf()
-        //catFacts.clear()
         val jsonArray = JSONArray(responceText)
         for(i in 0 until jsonArray.length()){
             val jsonObject = jsonArray.getJSONObject(i)
@@ -85,7 +73,7 @@ class AllFactsFragment : Fragment() {
             val cat = CatFact(catText, "", false)
 
             cats.add(cat)
-            println("eee "+ catText)
+
         }
         return  cats
 
@@ -103,16 +91,7 @@ class AllFactsFragment : Fragment() {
 
 
     companion object {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
         private const val ARG_SECTION_NUMBER = "section_number"
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         @JvmStatic
         fun newInstance(sectionNumber: Int): AllFactsFragment {
             return AllFactsFragment().apply {

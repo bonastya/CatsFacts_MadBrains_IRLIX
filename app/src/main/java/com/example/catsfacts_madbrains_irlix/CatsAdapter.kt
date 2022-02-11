@@ -22,11 +22,6 @@ class CatsAdapter( var catsList: List<CatFact>) :
 
     override fun getItemCount() = catsList.size
 
-   /* fun add(cat: CatFact){
-        catsList.add(cat)
-        notifyDataSetChanged()
-    }*/
-
 
 
 }

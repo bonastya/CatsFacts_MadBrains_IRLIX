@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         val tabs: TabLayout = binding.tabs
         tabs.setupWithViewPager(viewPager)
         val fab: FloatingActionButton = binding.fab
+        tabs.getTabAt(0)?.setIcon(R.drawable.ic_baseline_search_24);
+        tabs.getTabAt(1)?.setIcon(R.drawable.ic_baseline_favorite_24);
+
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
