@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.squareup.picasso.Picasso
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -20,6 +22,7 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        initRealm()
         setupActionBar()
         setText()
         getImg(catImg, progressBarImg)
@@ -87,6 +90,25 @@ class DetailActivity : AppCompatActivity() {
         val jsonObject = JSONObject(responceText)
         val catImg = jsonObject.getString("file").replace("\\", "")
         return catImg
+    }
+
+    fun addToFavorit(view: android.view.View) {
+        val text = intent?.extras?.getString(CAT_FACT_TAG)
+
+        val realm = Realm.getDefaultInstance()
+        realm.beginTransaction()
+        val cat: CatFact =realm.createObject(CatFact::class.java)
+        cat.factText=text!!
+        cat.isFavorit=true
+        realm.commitTransaction()
+    }
+
+    private fun initRealm(){
+        Realm.init(this)
+        val config = RealmConfiguration.Builder()
+            .deleteRealmIfMigrationNeeded()
+            .build()
+        Realm.setDefaultConfiguration(config)
     }
 
 }

@@ -105,6 +105,7 @@ android:background="#ebffff"
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addButton"
+        android:onClick="addToFavorit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"

@@ -20,6 +20,8 @@ import com.example.catsfacts_madbrains_irlix.CatFact
 import com.example.catsfacts_madbrains_irlix.CatsAdapter
 import com.example.catsfacts_madbrains_irlix.R
 import com.example.catsfacts_madbrains_irlix.databinding.FragmentMainBinding
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -57,6 +59,8 @@ class PlaceholderFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val root = binding.root
 
+        initRealm()
+
         if(arguments?.getInt(ARG_SECTION_NUMBER)==1){
             //факты из интернета(загрузить с сервера)
             val queue = Volley.newRequestQueue(context)
@@ -64,7 +68,17 @@ class PlaceholderFragment : Fragment() {
         }
         else{
             //избранное(загрузить из бд)
+            loadFromDB()
+            /*for(i in catsInFavourites)
+                catFacts.add(i)*/
 
+            /*val catsRecyclerView: RecyclerView = binding.catsRecyclerView
+            //mRecyclerView.setAdapter(new MyListAdapter(mRealm.allObjects(MyBook.class)))
+            with(catsRecyclerView) {
+                this.layoutManager = LinearLayoutManager(context)
+                this.adapter = catFactsAdapter
+                this.setHasFixedSize(true)
+            }*/
         }
 
 
@@ -83,6 +97,30 @@ class PlaceholderFragment : Fragment() {
 
 
         return root
+    }
+
+    private fun loadFromDB()/*:List<CatFact>*/{
+        val realm = Realm.getDefaultInstance()
+        println ("ggg "+realm.where(CatFact::class.java).findAll().toString())
+        //return realm.where(CatFact::class.java).findAll()
+
+        val catsRecyclerView: RecyclerView = binding.catsRecyclerView
+        //mRecyclerView.setAdapter(new MyListAdapter(mRealm.allObjects(MyBook.class)))
+
+        with(catsRecyclerView) {
+            this.layoutManager = LinearLayoutManager(context)
+            this.adapter = CatsAdapter(realm.where(CatFact::class.java).findAll())
+            this.setHasFixedSize(true)
+        }
+
+    }
+
+    private fun initRealm(){
+        Realm.init(context)
+        val config = RealmConfiguration.Builder()
+            .deleteRealmIfMigrationNeeded()
+            .build()
+        Realm.setDefaultConfiguration(config)
     }
 
     //получить с сервера строку с json
