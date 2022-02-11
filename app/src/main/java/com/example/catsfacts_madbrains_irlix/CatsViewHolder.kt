@@ -5,7 +5,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.catsfacts_madbrains_irlix.DetailActivity.Companion.CAT_FACT_TAG
 
 import com.squareup.picasso.Picasso
@@ -25,7 +30,9 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             //заполнение данными
             catFactTextView.text = cat.factText
-            getImg(catFactImg, catProgressBar)
+            //getImg(catFactImg, catProgressBar)
+            val queue = Volley.newRequestQueue(context)
+            getImgFromServer(catFactImg, queue)
 
             this.setOnClickListener{
                 openDetailActivity(this.context, cat)
@@ -60,9 +67,33 @@ class CatsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
+    private fun getImgFromServer(catFactImg: ImageView, queue: RequestQueue) {
+        val stringRequest = StringRequest(
+            Request.Method.GET,
+            imgUrl,
+            { response ->
+                val jsonObject = JSONObject(response)
+                val catImg = jsonObject.getString("file").replace("\\", "")
+
+                Picasso.get()
+                    .load(catImg)
+                    .fit().centerCrop()
+                    .into(catFactImg)
+
+            },
+            {
+                //Toast.makeText(this, "Ошибка запроса", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        queue.add(stringRequest)
+    }
+
 
     private fun getCatsImgFromServer():String{
+        println("ooo функция getCatsImgFromServer")
         var img = URL(imgUrl).readText()
+        println("ooo функция getCatsImgFromServer рез "+img)
         return parceImgResponce(img)
     }
 

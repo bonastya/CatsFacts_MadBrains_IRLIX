@@ -5,6 +5,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.Toast
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.squareup.picasso.Picasso
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -22,10 +27,13 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        initRealm()
         setupActionBar()
         setText()
-        getImg(catImg, progressBarImg)
+
+        val queue = Volley.newRequestQueue(this)
+        getImgFromServer(catImg,queue)
+
+        //getImg(catImg, progressBarImg)
 
     }
 
@@ -53,44 +61,31 @@ class DetailActivity : AppCompatActivity() {
     }
 
 
-
-
-
     private val imgUrl = "https://aws.random.cat/meow"
 
-    fun getImg(catFactImg: ImageView, catProgressBar: ProgressBar) {
 
-        catProgressBar.visibility = View.VISIBLE
-        val result: Deferred<String> = GlobalScope.async {
-            getCatsImgFromServer()
-        }
-
-        GlobalScope.launch(Dispatchers.Main) {
-            // get the downloaded bitmap
-            val imgUrl : String = result.await()
-
-            imgUrl?.apply {
+    private fun getImgFromServer(catFactImg: ImageView, queue: RequestQueue) {
+        val stringRequest = StringRequest(
+            Request.Method.GET,
+            imgUrl,
+            { response ->
+                val jsonObject = JSONObject(response)
+                val catImg = jsonObject.getString("file").replace("\\", "")
 
                 Picasso.get()
-                    .load(imgUrl)
+                    .load(catImg)
                     .fit().centerCrop()
                     .into(catFactImg)
+
+            },
+            {
+                Toast.makeText(this, "Ошибка запроса", Toast.LENGTH_SHORT).show()
             }
+        )
 
-            catProgressBar.visibility = View.INVISIBLE
-        }
+        queue.add(stringRequest)
     }
 
-    private fun getCatsImgFromServer():String{
-        var img = URL(imgUrl).readText()
-        return parceImgResponce(img)
-    }
-
-    private fun parceImgResponce(responceText: String):String{
-        val jsonObject = JSONObject(responceText)
-        val catImg = jsonObject.getString("file").replace("\\", "")
-        return catImg
-    }
 
     fun addToFavorit(view: android.view.View) {
         val text = intent?.extras?.getString(CAT_FACT_TAG)

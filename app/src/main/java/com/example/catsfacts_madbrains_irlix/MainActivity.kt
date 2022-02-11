@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //initRealm()
+        initRealm()
 
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
